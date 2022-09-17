@@ -85,6 +85,71 @@ exports.findById = (id) => {
   );
 }
 
+// Création d'une boucle pour afficher tous les items de la liste
+
+for (let i = 0; i < products.length; i++) {
+
+  // Récupération de l'élément du DOM qui accueillera les items 
+
+  const sectionItems = document.querySelector(".items");
+
+  // Création d'une balise dédié à un modèle de canapé 
+
+  const modelElement = document.createElement("article");
+
+  // Création des éléments des produits et remplissages de ceux-ci 
+
+  // Element 'colors'
+
+  const colorsElement = document.createElement("p");
+  colorsElement.innerText = products[i].colors;
+  modelElement.appendChild(colorsElement);
+
+  // Element 'id'
+
+  const idElement = document.createElement("p");
+  idElement.innerText = products[i].id;
+  modelElement.appendChild(idElement);
+
+  // Element 'name'
+
+  const nameElement = document.createElement("h3");
+  nameElement.innerText = products[i].name;
+  modelElement.appendChild(nameElement);
+
+  // Element 'price'
+
+  const priceElement = document.createElement("p");
+  priceElement.innerText = "prix: " + products[i].price + "€";
+  modelElement.appendChild(priceElement);
+
+  // Element 'imageUrl'
+
+  const imageUrlElement = document.createElement("img");
+  imageUrlElement.src = products[i].imageUrl;
+  modelElement.appendChild(imageUrlElement);
+
+  // Element 'description'
+
+  const descriptionElement = document.createElement("p");
+  descriptionElement.innerText = products[i].description;
+  modelElement.appendChild(descriptionElement);
+
+  // Element 'altText'
+
+  const altTextElement = document.createElement("alt");
+  altTextElement.innerText = products[i].altTextElement;
+  modelElement.appendChild(altTextElement);
+  }
+
+  // Rattachement de la balise au body
+
+  document.body.appendChild(modelElement);
+
+
+
+
+// Ajout des éléments crées dans le DOM
 
 
 
