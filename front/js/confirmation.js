@@ -12,16 +12,16 @@ const orderId = document.getElementById("orderId");
 orderId.innerText = responseId
 console.log(orderId);
 
-// Suppression des éléments du localstorage à l'aide d'une fonction
+// Suppression des éléments de l'api 
 
-function removeItems(key) {
-    localStorage.removeItem(key)
-}
+const deleteApi = fetch("https://restapi.fr/api/kanap", {
+    method: "DELETE",
+    headers: { "Content-Type": "aplication/json" },
+    body: ""
+  })
 
-removeItems("product");
-removeItems("formValue");
-removeItems("id de la réponse");
-
+ //localStorage.removeItem("formValue");
+ localStorage.removeItem("id de la réponse")
 // Retour à la page d'accueil en cas de réactualisation
 
 if (responseId == null) {
