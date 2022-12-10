@@ -522,10 +522,6 @@ commandButton.addEventListener("click", (Event) => {
         console.log("id de la réponse");
         console.log(content._id);
 
-        // Envoyer l'id dans le localstorage
-
-        localStorage.setItem("id de la réponse", content._id);
-
         // Aller dans la page confirmation
 
         window.location.href = "./confirmation.html"
