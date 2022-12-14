@@ -1,29 +1,32 @@
 // Création d'un tableau vide qui va récupérer les données enregistrées de la page produit pour les afficher dans la page panier
-let getProduct = [];
+let getProduct = JSON.parse(localStorage.getItem("produit"));
+console.log(getProduct)
 
-const fetchProduct = async () => {
-  await fetch("https://restapi.fr/api/kanap")
-    .then((res) => res.json())
-    .then((promise) => {
-      // Ici on transfère la promesse le tableau saveProduct
-      getProduct = promise;
-      console.log(getProduct);
-    })
-
-    .catch((error) => console.error("Erreur = " + error));
+// Si le localStorage est vide, effacer la clé "produit"
+if(getProduct.length == 0) {
+  console.log(true)
+  localStorage.removeItem("produit")
 }
 
+let urlData = [];
+
+const fetchProduct = async () => {
+  await fetch('http://localhost:3000/api/products/')
+    .then((res) => res.json())
+    .then((promise) => {
+      // Ici on transfère la promesse le tableau urlData
+      urlData = promise;
+      console.log(urlData)
+    })
+    .catch((error) => console.error("Erreur = " + error));
+};
 fetchProduct()
 
-
 // Création de la variable qui contendra le code pour afficher les différents produits dans la page panier
-
-let newQuantity = [];
-
-let price = [];
-
 let display = [];
 
+//Variable qui va récupérer un tableau des quantités après la modification
+let newQuantity = [];
 
 // Récupération de la balise HTML où les produits séléctionnés seront affichés
 const productCard = document.getElementById("cart__items");
@@ -41,114 +44,20 @@ const cartDisplay = async () => {
   await fetchProduct()
   console.log(getProduct)
   console.log(getProduct.length)
-  // Si getProduct ne contient uniquement un objet
-  if (getProduct.length == undefined) {
-    display = `
-        <article class="cart__item" data-id="${getProduct.id}" data-color="${getProduct.color}">
-        <div class="cart__item__img">
-          <img src="${getProduct.image}" alt="${getProduct.alt}">
-        </div>
-        <div class="cart__item__content">
-          <div class="cart__item__content__description">
-            <h2>${getProduct.name}</h2>
-            <p>${getProduct.color}</p>
-            <p>${getProduct.price} €</p>
-          </div>
-          <div class="cart__item__content__settings">
-            <div class="cart__item__content__settings__quantity">
-              <p class="quantity">Qté : ${getProduct.quantity}</p>
-              <input type="number" class="itemQuantity" id="${getProduct.quantity}" name="itemQuantity" min="1" max="100" value="${getProduct.quantity}">
-            </div>
-            <div class="cart__item__content__settings__delete">
-              <p class="deleteItem">Supprimer</p>
-            </div>
-          </div>
-        </div>
-      </article>
-        `
 
-    productCard.innerHTML = display;
+  // Création d'une boucle 
+  for (i = 0; i < getProduct.length; i++) {
+    console.log(getProduct[i].id)
+    console.log(urlData[i]._id)
 
-    // Suppression de l'élément 
-    // Séléction du bouton supprimer
-    const deleteItem = document.querySelector(".deleteItem");
+    // Création d'une constante qui récupère le bon prix du produit dans le tableau de la promise
+    const productPrice = urlData.find((el) => el.name === getProduct[i].name).price
+    console.log(productPrice)
+    // si le panier n'est pas vide, afficher les produits
 
-    //On écoute le click du bouton
-    deleteItem.addEventListener("click", (event) => {
-
-      // On supprime l'élément de l'api grace à la méthode fetch "DELETE"
-      const deleteProduct = fetch("https://restapi.fr/api/kanap", {
-        method: "DELETE",
-        headers: { "Content-Type": "aplication/json" },
-        body: JSON.stringify(getProduct)
-      })
-
-      deleteProduct.then(async (response) => {
-        try {
-          console.log(response);
-          const content = await response.json();
-          content = JSON.parse(getProduct);
-          console.log(content);
-        } catch (e) {
-          console.log("erreur")
-        }
-      })
-
-      // On supprime l'afichage de l'élément 
-      deleteItem.parentElement.style.display = "none";
-
-      // On réactualise la page après le clic
-      window.location.href = "./cart.html"
-    })
-
-    // Création d'un tableau qui va récupérer toutes les quantités
-    let totalQuantity = [];
-
-
-    // Création d'un tableau qui va récupérer tous les prix
-    let totalPrice = [];
-
-    totalQuantity = getProduct.quantity;
-    document.getElementById("totalQuantity").innerText = totalQuantity;
-    console.log(totalQuantity);
-
-    totalPrice = getProduct.price
-    document.getElementById("totalPrice").innerText = totalPrice;
-    let changeValue = document.querySelector(".itemQuantity");
-
-    const quantityOutput = document.querySelector(".quantity");
-
-    changeValue.addEventListener("change", (e) => {
-      e.preventDefault();
-
-      const currentQuantity = document.querySelector(".itemQuantity").value;
-      console.log(document.querySelector(".itemQuantity").value)
-      let qty = currentQuantity;
-      console.log(qty);
-
-      quantityOutput.innerText = `Qté : ${qty}`;
-
-      totalQuantity = qty;
-      document.getElementById("totalQuantity").innerText = totalQuantity;
-
-      let newPrice = getProduct.price * qty
-      totalPrice = newPrice;
-      document.getElementById("totalPrice").innerText = totalPrice;
-    })
-    
-
-    // Si getProduct est un tableau de plusieurs objets
-  } else {
-    // Création d'une boucle 
-    for (i = 0; i < getProduct.length; i++) {
-
-      console.log(getProduct.length)
-
-      // si le panier n'est pas vide, afficher les produits
-
-      // Remplissage de la variable 'cartDisplay' avec les informations pour afficher les différents produits dans la page panier
-      display = display +
-        `
+    // Remplissage de la variable 'cartDisplay' avec les informations pour afficher les différents produits dans la page panier
+    display = display +
+      `
           <article class="cart__item" data-id="${getProduct[i].id}" data-color="${getProduct[i].color}">
                 <div class="cart__item__img">
                   <img src="${getProduct[i].image}" alt="${getProduct[i].alt}">
@@ -157,7 +66,7 @@ const cartDisplay = async () => {
                   <div class="cart__item__content__description">
                     <h2>${getProduct[i].name}</h2>
                     <p>${getProduct[i].color}</p>
-                    <p>${getProduct[i].price} €</p>
+                    <p>${productPrice} €</p>
                   </div>
                   <div class="cart__item__content__settings">
                     <div class="cart__item__content__settings__quantity">
@@ -173,209 +82,138 @@ const cartDisplay = async () => {
               `
 
 
-      // Injection du code dans la balise HTML prévu à cet effet
-      productCard.innerHTML = display;
+    // Injection du code dans la balise HTML prévu à cet effet
+    productCard.innerHTML = display;
 
-    };
-
-
-
-    // Séléction des boutons supprimer
-
-    const deleteItem = document.querySelectorAll(".deleteItem");
-    let del = []
-
-    // Création d'une boucle qui va permettre de supprimer le produit séléctionné par le bouton supprimer
-    for (j = 0; j < deleteItem.length; j++) {
-
-      // Création d'une constante qui va récupérer la balise de chaque produit affiché
-      const productArticle = document.getElementsByClassName("cart__item");
-
-      // Création d'une constante qui récupère la balise sélectionné par le bouton supprimer
-      const productToDelete = productArticle[j];
-
-
-      // Création d'une variable qui récupère l'id du produit séléctionné par le bouton supprimer
-      let deleteId = getProduct[j].id;
-
-      // Création d'un addeventListener qui va écouter le click du bouton supprimer du produit séléctionné
-      deleteItem[j].addEventListener("click", (event) => {
-
-        event.preventDefault();
-
-        //Supression de l'élement sélectionné du tableau saveProduct
-        del = getProduct.splice([j], 1)
-
-        //Suppimer de l'affichage de la page l'élément sélectionné
-        productToDelete.style.display = "none";
-
-
-        // Création d'une fonction qui va enlever le produit séléctionné par le bouton supprimer de l'api fetch
-        const deleteProduct = fetch("https://restapi.fr/api/kanap", {
-          method: "DELETE",
-          headers: { "Content-Type": "aplication/json" },
-          body: JSON.stringify(getProduct[j])
-        })
-        console.log(deleteProduct);
-        console.log(getProduct)
-
-
-        deleteProduct.then(async (response) => {
-          try {
-            console.log(response);
-            const content = await response.json();
-            content = JSON.parse(getProduct);
-            console.log(content);
-          } catch (e) {
-            console.log("erreur")
-          }
-        })
-
-        window.location.href = "./cart.html"
-      })
-
-
-
-
-      let changeValue = document.querySelectorAll(".itemQuantity");
-
-      // Création d'un tableau qui va récupérer toutes les quantités
-      const totalQuantity = [];
-
-
-      // Création d'un tableau qui va récupérer tous les prix
-      const totalPrice = [];
-
-      for (let m = 0; m < changeValue.length; m++) {
-
-        // Sélectionne la balise à coté de l'input pour 
-
-        const quantityOutput = document.getElementsByClassName("quantity")[m];
-
-        // Ajout des prix dans le tableau
-
-        let price = getProduct[m].price * getProduct[m].quantity;
-        totalPrice.push(price);
-
-
-        let finalPrice = totalPrice.reduce((accumulator, price) => {
-          return accumulator + price
-        }, 0);
-
-
-        document.getElementById("totalPrice").innerText = finalPrice;
-
-        // Ajout des quantités dans le tableau totalQuantity
-        let productQuantity = parseInt(getProduct[m].quantity);
-        totalQuantity.push(productQuantity);
-        let finalQuantity = totalQuantity.reduce((accumulator, productQuantity) => {
-          return accumulator + productQuantity
-        }, 0);
-
-
-        document.getElementById("totalQuantity").innerText = finalQuantity;
-
-        // L'événement change est déclenché pour les éléments <input> lorsqu'un changement de leur valeur est réalisé par l'utilisateur.
-        changeValue[m].addEventListener("change", (e) => {
-          e.preventDefault();
-
-          // Séléctionne la valeur inscrit dans l'input et lui attribue une variable ici qty.
-          const currentQuantity = document.getElementsByName("itemQuantity")[m].value;
-          let qty = currentQuantity;
-          console.log(qty);
-
-          // Ajout de la nouvelle quantité dans le tableau totalQuantity
-
-          totalQuantity.splice(m, 1, parseInt(qty));
-
-          // Ici, la quantité inscrite dans l'input du navigateur est égale a celle trouvée dans saveProduct 
-          getProduct[m].quantity = qty;
-          console.log(getProduct[m].quantity)
-          productQuantity[m] = qty;
-          finalQuantity = totalQuantity.reduce((accumulator, currentValue) => {
-            return accumulator + currentValue
-          }, 0);
-
-
-          document.getElementById("totalQuantity").innerText = finalQuantity;
-
-          // Modifie la quantité affichée à coté de l'input
-
-          quantityOutput.innerText = `Qté : ${qty}`
-
-          // Calcul du prix en fonction de la quantité choisie
-
-          let newPrice = getProduct[m].price * qty;
-          console.log(newPrice);
-
-          totalPrice.splice(m, 1, newPrice);
-          console.log(totalPrice);
-
-          finalPrice = totalPrice.reduce((accumulator, currentValue) => {
-            return accumulator + currentValue
-          }, 0);
-
-          document.getElementById("totalPrice").innerText = finalPrice;
-          console.log(newPrice);
-          console.log(qty);
-
-          // Ici, le prix inscrit dans l'input du navigateur est égale a celui trouvé dans saveProduct 
-          getProduct.price = newPrice;
-          console.log(getProduct.price);
-
-          // Permet de savoir l'id du produit que l'on souhaite modifier dans l'input et egal au produit stocké dans le storage
-          let product = getProduct.find(
-            (dataProduct) => dataProduct.id === getProduct[m].id
-          );
-
-
-
-          if (qty <= 0 || qty > 100) {
-            alert("Veuillez entrer un nombre compris entre 0 et 100");
-            window.location.reload();
-            return getProduct[m];
-          }
-          else {
-            let finalProducts = {
-              id: getProduct[m].id,
-              image: getProduct[m].image,
-              alt: getProduct[m].alt,
-              name: getProduct[m].name,
-              color: getProduct[m].color,
-              price: newPrice,
-              quantity: qty,
-            }
-
-
-            console.log(getProduct);
-
-            let newSave = { finalProducts }
-
-            newSave = fetch("https://restapi.fr/api/kanap", {
-              method: "PUT",
-              body: JSON.stringify(finalProducts),
-              headers: {
-                "Content-Type": "application/json"
-              },
-            })
-
-            let newId = newSave.findIndex((Element) => Element.id == getProduct[m].id);
-
-            let item = newSave[newId];
-            item.quantity = qty
-            item.price = newPrice
-
-            newSave[newId] = item
-
-            console.log(newId);
-
-          }
-
-        });
-      }
-    }
   }
+
+  deleteItem = Array.from(document.querySelectorAll('.deleteItem'));
+  let del= [];
+  console.log(deleteItem)
+
+  // supprimer element
+  for (let i = 0; i < deleteItem.length; i++) {
+
+      deleteItem[i].addEventListener('click', () => {
+
+          deleteItem[i].parentElement.style.display ="none";
+          
+          
+          del = getProduct;
+          del.splice([i], 1);
+          console.log(del)
+          console.log(getProduct)
+          
+          getProduct = localStorage.setItem('produit', JSON.stringify(del));
+
+          window.location.href ="cart.html";
+
+      });
+
+  };
+
+console.log(getProduct)
+
+
+
+  let changeValue = document.querySelectorAll(".itemQuantity");
+
+  // Création d'un tableau qui va récupérer toutes les quantités
+  const totalQuantity = [];
+
+
+  // Création d'un tableau qui va récupérer tous les prix
+  const totalPrice = [];
+
+  for (let m = 0; m < changeValue.length; m++) {
+
+    // Sélectionne la balise à coté de l'input pour 
+    const productPrice = urlData.find((el) => el.name === getProduct[m].name).price
+    console.log(productPrice)
+    const quantityOutput = document.getElementsByClassName("quantity")[m];
+
+    // Ajout des prix dans le tableau
+
+    let price = productPrice * getProduct[m].quantity;
+
+    totalPrice.push(price);
+
+
+    let finalPrice = totalPrice.reduce((accumulator, price) => {
+      return accumulator + price
+    }, 0);
+
+
+    document.getElementById("totalPrice").innerText = finalPrice;
+
+    // Ajout des quantités dans le tableau totalQuantity
+    let productQuantity = parseInt(getProduct[m].quantity);
+    totalQuantity.push(productQuantity);
+    let finalQuantity = totalQuantity.reduce((accumulator, productQuantity) => {
+      return accumulator + productQuantity
+    }, 0);
+
+
+    document.getElementById("totalQuantity").innerText = finalQuantity;
+
+    // L'événement change est déclenché pour les éléments <input> lorsqu'un changement de leur valeur est réalisé par l'utilisateur.
+    changeValue[m].addEventListener("change", (e) => {
+      e.preventDefault();
+
+      // Séléctionne la valeur inscrit dans l'input et lui attribue une variable ici qty.
+      const currentQuantity = document.getElementsByName("itemQuantity")[m].value;
+      let qty = currentQuantity;
+      console.log(qty);
+
+      // Ajout de la nouvelle quantité dans le tableau totalQuantity
+
+      totalQuantity.splice(m, 1, parseInt(qty));
+
+      // Ici, la quantité inscrite dans l'input du navigateur est égale a celle trouvée dans saveProduct 
+      getProduct[m].quantity = qty;
+      console.log(getProduct[m].quantity)
+      productQuantity[m] = qty;
+      finalQuantity = totalQuantity.reduce((accumulator, currentValue) => {
+        return accumulator + currentValue
+      }, 0);
+
+
+      document.getElementById("totalQuantity").innerText = finalQuantity;
+
+      // Modifie la quantité affichée à coté de l'input
+
+      quantityOutput.innerText = `Qté : ${qty}`
+
+      // Calcul du prix en fonction de la quantité choisie
+      let newPrice = urlData[m].price * qty;
+      console.log(newPrice);
+
+      //Modification du tableau des prix en remplaçant l'ancien prix par le nouveau
+      totalPrice.splice(m, 1, newPrice);
+      console.log(totalPrice);
+
+      finalPrice = totalPrice.reduce((accumulator, currentValue) => {
+        return accumulator + currentValue
+      }, 0);
+
+      document.getElementById("totalPrice").innerText = finalPrice;
+      console.log(newPrice);
+      console.log(qty);
+
+      // Ici, le prix inscrit dans l'input du navigateur est égale a celui trouvé dans saveProduct 
+      urlData.price = newPrice;
+      console.log(urlData.price);
+
+      // Permet de savoir l'id du produit que l'on souhaite modifier dans l'input et egal au produit stocké dans le storage
+      let product = getProduct.find(
+        (dataProduct) => dataProduct.id === getProduct[m].id
+      );
+
+    });
+  }
+
 }
+
 cartDisplay();
 console.log(getProduct)
 
@@ -487,8 +325,8 @@ commandButton.addEventListener("click", (Event) => {
 
 
 
-  // Condition : si le formulaire est bien remplie, envoyer les donnnées dans le localStorage. Sinon, ne pas envoyer les données et afficher un message d'alerte
-  // si les valeurs sont valides, envoyer les valeurs dans le localstorage
+  // Condition : si le formulaire est bien remplie, envoyer les donnnées dans l'api. Sinon, ne pas envoyer les données et afficher un message d'alerte
+  // si les valeurs sont valides, envoyer les valeurs dans l'api'
 
   if (validFirstName == true && validLastName == true && validAddress == true && validCity == true && validEmail == true) {
     console.log("formulaire");
@@ -520,11 +358,11 @@ commandButton.addEventListener("click", (Event) => {
         // Récupération de l'id de la reponse du serveur
 
         console.log("id de la réponse");
-        console.log(content._id);
+        const id = content._id
+        console.log(id)
 
         // Aller dans la page confirmation
-
-        window.location.href = "./confirmation.html"
+        window.location.href = `./confirmation.html?id=${id}`
 
       } catch (e) {
         alert("erreur")
