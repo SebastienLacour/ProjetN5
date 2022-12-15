@@ -1,13 +1,19 @@
-// Création d'un tableau vide qui va récupérer les données enregistrées de la page produit pour les afficher dans la page panier
+/**
+ *  Création d'un tableau vide qui va récupérer les données enregistrées de la page produit pour les afficher dans la page panier
+ * @type {Array}
+ */
 let getProduct = JSON.parse(localStorage.getItem("produit"));
 console.log(getProduct)
 
 // Si le localStorage est vide, effacer la clé "produit"
-if(getProduct.length == 0) {
+if (getProduct.length == 0) {
   console.log(true)
   localStorage.removeItem("produit")
 }
-
+/**
+ *  Nouveau tableau vide ou l'on stocke les données que va nous retourner la methode fetch en dessous.
+ * @type {Array}
+ */
 let urlData = [];
 
 const fetchProduct = async () => {
@@ -22,8 +28,11 @@ const fetchProduct = async () => {
 };
 fetchProduct()
 
-// Création de la variable qui contendra le code pour afficher les différents produits dans la page panier
-let display = [];
+/**
+ * Création de la variable qui contendra le code pour afficher les différents produits dans la page panier
+ * @type {Text}
+ */
+let display = "";
 
 //Variable qui va récupérer un tableau des quantités après la modification
 let newQuantity = [];
@@ -50,7 +59,10 @@ const cartDisplay = async () => {
     console.log(getProduct[i].id)
     console.log(urlData[i]._id)
 
-    // Création d'une constante qui récupère le bon prix du produit dans le tableau de la promise
+    /**
+     * Création d'une constante qui récupère le bon prix du produit dans le tableau de la promise
+     * @type {Number}
+     */
     const productPrice = urlData.find((el) => el.name === getProduct[i].name).price
     console.log(productPrice)
     // si le panier n'est pas vide, afficher les produits
@@ -87,42 +99,59 @@ const cartDisplay = async () => {
 
   }
 
-  deleteItem = Array.from(document.querySelectorAll('.deleteItem'));
-  let del= [];
+  /**
+   * Récupération des boutons supprimer
+   * @type {Array}
+   */
+  let deleteItem = Array.from(document.querySelectorAll('.deleteItem'));
+
+  /**
+   * Tableau qui va contenir les produits après la supression du produit sélectionné
+   * @type {Array}
+   */
+  let del = [];
   console.log(deleteItem)
 
   // supprimer element
   for (let i = 0; i < deleteItem.length; i++) {
 
-      deleteItem[i].addEventListener('click', () => {
+    deleteItem[i].addEventListener('click', () => {
 
-          deleteItem[i].parentElement.style.display ="none";
-          
-          
-          del = getProduct;
-          del.splice([i], 1);
-          console.log(del)
-          console.log(getProduct)
-          
-          getProduct = localStorage.setItem('produit', JSON.stringify(del));
+      deleteItem[i].parentElement.style.display = "none";
 
-          window.location.href ="cart.html";
 
-      });
+      del = getProduct;
+      del.splice([i], 1);
+      console.log(del)
+      console.log(getProduct)
+
+      getProduct = localStorage.setItem('produit', JSON.stringify(del));
+
+      window.location.href = "cart.html";
+
+    });
 
   };
 
-console.log(getProduct)
+  console.log(getProduct)
 
 
-
+  /**
+   * Récupération des inputs qui vont modifier la quantité
+   * @type {Array}
+   */
   let changeValue = document.querySelectorAll(".itemQuantity");
 
-  // Création d'un tableau qui va récupérer toutes les quantités
+  /**
+ * Création d'un tableau qui va récupérer toutes les quantités
+ * @type {Array}
+ */
   const totalQuantity = [];
 
-
-  // Création d'un tableau qui va récupérer tous les prix
+  /**
+   *  Création d'un tableau qui va récupérer tous les prix
+   * @type {Array}
+   */
   const totalPrice = [];
 
   for (let m = 0; m < changeValue.length; m++) {
@@ -133,11 +162,18 @@ console.log(getProduct)
     const quantityOutput = document.getElementsByClassName("quantity")[m];
 
     // Ajout des prix dans le tableau
+    /**
+     * Création d'une constante qui récupère le bon prix du produit dans le tableau de la promise
+     * @type {number}
+     */
 
     let price = productPrice * getProduct[m].quantity;
 
     totalPrice.push(price);
-
+/**
+ * @function reduce prend tous les prix du tableau, les additionne pour retourner une seule valeur
+ * @type {number}
+ */
 
     let finalPrice = totalPrice.reduce((accumulator, price) => {
       return accumulator + price
@@ -160,7 +196,10 @@ console.log(getProduct)
     changeValue[m].addEventListener("change", (e) => {
       e.preventDefault();
 
-      // Séléctionne la valeur inscrit dans l'input et lui attribue une variable ici qty.
+      /**
+       * Séléctionne la valeur inscrit dans l'input et lui attribue une variable ici qty.
+       * @type {number}
+       */
       const currentQuantity = document.getElementsByName("itemQuantity")[m].value;
       let qty = currentQuantity;
       console.log(qty);
@@ -204,11 +243,6 @@ console.log(getProduct)
       urlData.price = newPrice;
       console.log(urlData.price);
 
-      // Permet de savoir l'id du produit que l'on souhaite modifier dans l'input et egal au produit stocké dans le storage
-      let product = getProduct.find(
-        (dataProduct) => dataProduct.id === getProduct[m].id
-      );
-
     });
   }
 
@@ -220,11 +254,16 @@ console.log(getProduct)
 const commandButton = document.getElementById("order");
 commandButton.addEventListener("click", (Event) => {
   Event.preventDefault();
-  const formValue = {
-    prenom: document.getElementById("firstName").value,
-    nom: document.getElementById("lastName").value,
-    adresse: document.getElementById("address").value,
-    ville: document.getElementById("city").value,
+
+  /**
+   * Création d'un objet qui va récuperer les valeaurs du formulaire
+   * @type {{firstName: string, lastName: string, address: string, city: string, email: string}}
+   */
+  const contact = {
+    firstName: document.getElementById("firstName").value,
+    lastName: document.getElementById("lastName").value,
+    address: document.getElementById("address").value,
+    city: document.getElementById("city").value,
     email: document.getElementById("email").value,
   }
 
@@ -250,25 +289,24 @@ commandButton.addEventListener("click", (Event) => {
 
   // Création de la const pour le prénom 
 
-  const firstName = formValue.prenom;
+  const firstName = contact.firstName;
 
   // Création de la const pour le nom
 
-  const lastName = formValue.nom;
+  const lastName = contact.lastName;
 
   // Création de la const pour l'adresse
-  const address = formValue.adresse;
+  const address = contact.address;
 
   // Création de la const pour la ville
 
-  const city = formValue.ville;
+  const city = contact.city;
 
   // Création de la const pour l'email
 
-  const email = formValue.email;
+  const email = contact.email;
 
   // Controle des données en utilisant les variables regexp
-
   let validFirstName = stringRegExp.test(firstName);
   console.log(validFirstName);
   let validLastName = stringRegExp.test(lastName);
@@ -330,35 +368,62 @@ commandButton.addEventListener("click", (Event) => {
 
   if (validFirstName == true && validLastName == true && validAddress == true && validCity == true && validEmail == true) {
     console.log("formulaire");
-    console.log(formValue);
 
-    const sent = {
-      getProduct,
-      formValue,
+    console.log(contact)
+
+    /**
+     * Création d'un tableau vide qui va récupèrer l'id de tous les produits présents dans le panier
+     * @type {Array}
+     */
+    let productId = [];
+
+    //Création de la boucle qui va récupèrer tous les ids du tableau getProduct
+    for (i = 0; i < getProduct.length; i++) {
+      console.log(getProduct[i].id)
+
+      //Récupère les ids du tableau getProduct pour les ajouté au tableau productId
+      productId.push(getProduct[i].id)
+
     }
+    console.log(productId)
 
-    const postResults = fetch("https://restapi.fr/api/command", {
+    /**
+     * Envoyer les données du formulaire et l'id de chaque produits dans l'api au format JSON
+     * @type {Promise<{contact: {firstName: String, lastName: String, address: String, city: String, email: String} products: String}>}
+     */
+    const postResults = fetch("http://localhost:3000/api/products/order", {
       method: "POST",
-      body: JSON.stringify(sent),
+      body: JSON.stringify({
+        contact: {
+          firstName: contact.firstName,
+          lastName: contact.lastName,
+          address: contact.address,
+          city: contact.city,
+          email: contact.email
+        },
+        products: productId
+      }),
       headers: {
+        "Accept": "application/json",
         "Content-Type": "application/json",
       },
     })
     console.log("Récupération des résultats");
     console.log(postResults);
 
-    // Voir le résultat dans la console  
-
+    //Récupérer le résultat envoyé par l'api
     postResults.then(async (response) => {
       try {
         console.log(response);
         const content = await response.json();
         console.log(content);
 
-        // Récupération de l'id de la reponse du serveur
-
+        /**
+         *  Récupération de l'id de la reponse du serveur
+         *  @type {string}
+         */
+        const id = content.orderId
         console.log("id de la réponse");
-        const id = content._id
         console.log(id)
 
         // Aller dans la page confirmation

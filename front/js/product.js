@@ -5,14 +5,18 @@ const id = params.get("id");
 console.log(params);
 console.log(id);
 
-// Nouveau tableau vide ou l'on stocke les données que va nous retourner la methode fetch en dessous.
+/**
+ *  Nouveau tableau vide ou l'on stocke les données que va nous retourner la methode fetch en dessous.
+ * @type {Array}
+ */
 let urlData = [];
-
 console.log(urlData);
 
 
-// Utilisation de la methode fetch() afin de recupérer les données via l'id produit tout en affichant l'id du produit dans l'url de la page pour pouvor afficher la page de tel produit
-
+/**
+ * Utilisation de la methode fetch() afin de recupérer les données via l'id produit tout en affichant l'id du produit dans l'url de la page pour pouvor afficher la page de tel produit
+ * @return {Promise<{altTxt: string, colors: string[], description: string, imageUrl: string, name: string, price: number, _id: string}[]>}
+ */
 const fetchProduct = async () => {
   await fetch(`http://localhost:3000/api/products/` + id)
     .then((res) => res.json())
@@ -27,8 +31,11 @@ const fetchProduct = async () => {
 fetchProduct();
 console.log(fetchProduct);
 
-// Création d'une fonction qui affichera le produit séléctionné  dans la page produit 
 
+/**
+ * Création d'une fonction qui affichera le produit séléctionné  dans la page produit
+ * @async
+ */
 const productDisplay = async () => {
   await fetchProduct();
 
@@ -72,11 +79,14 @@ const productDisplay = async () => {
 
 productDisplay(urlData);
 console.log(productDisplay);
-
-// Récupération de l'id de la couleur
+/**
+ * Récupération de l'id de la couleur du produit
+ */
 const idColor = document.getElementById("colors");
 
-// Récupération de l'id de la quantité de produit'
+/**
+ * Récupération de l'id de la quantité de produit
+ */
 const idQuantity = document.getElementById("quantity");
 
 // Sauvegarder les données ajoutées par l'utilisateur en cliquant sur le bouton
@@ -87,7 +97,10 @@ console.log(button);
 
 console.log("id")
 console.log(id)
-
+/**
+ * Création d'un tableau qui va récupérer les valeurs du localStorage
+ * @type {Array}
+ */
 let saveProduct = JSON.parse(localStorage.getItem("produit"))
 console.log("valeur du localStorage avant l'ajout du produit")
 console.log(saveProduct);
@@ -98,15 +111,25 @@ button.addEventListener("click", (event) => {
   // Ajout d'un preventDefault qui va empecher l'actualisation de la page au clic du bouton
   event.preventDefault();
 
-  // Enregistrement de la couleur choisie
+  /**
+   * Enregistrement de la couleur choisie
+   * @type {string}
+   */
   const colorChoice = idColor.value;
   console.log(colorChoice);
 
-  // Enregistrement de la quantité choisie
+  /**
+   * Enregistrement de la quantité choisie
+   * @type {number}
+   */
   let quantityChoice = idQuantity.value;
   console.log(quantityChoice);
 
-  // Création d'un objet qui contient les différentes informations à enregistrer
+  
+  /**
+   * Création d'un objet qui contient les différentes informations à enregistrer
+   * @type {{id : string, image : string, alt : string, name : string, color : string, quantity : number}}
+   */
   let productSetting = {
     id: urlData._id,
     image: urlData.imageUrl,
@@ -154,7 +177,7 @@ button.addEventListener("click", (event) => {
     } else {
       console.log(false)
 
-      //On ajoute ce produit dans le tableau saveProduct
+      // On ajoute ce produit dans le tableau saveProduct
       saveProduct.push(productSetting);
 
       //On ajoute le nouveau tableau dans le localStorage

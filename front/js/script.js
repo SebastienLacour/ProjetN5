@@ -1,3 +1,5 @@
+
+
 // Récupere l'ID de chaque produit grâce à la methode searchParams qui permet de le récuperer directement dans l'URL
 let params = new URL(document.location).searchParams;
 const id = params.get("id");
@@ -5,14 +7,19 @@ const id = params.get("id");
 console.log(params);
 console.log(id);
 
-// Nouveau tableau vide ou l'on stocke les données que va nous retourner la methode fetch en dessous.
+/**
+ *  Nouveau tableau vide ou l'on stocke les données que va nous retourner la methode fetch en dessous.
+ * @type {Array}
+ */
 let urlData = [];
 
 console.log(urlData);
 
-
-// Utilisation de la methode fetch() afin de recupérer les données via l'id produit
-
+/**
+ * Utilisation de la methode fetch() afin de recupérer les données via l'id produit
+ * @async
+ * @return {Promise<{altTxt: string, colors: string[], description: string, imageUrl: string, name: string, price: number, _id: string}[]>}
+ */
 const fetchProduct = async () => {
   await fetch('http://localhost:3000/api/products/')
     .then((res) => res.json())
@@ -28,8 +35,11 @@ console.log(fetchProduct);
 
 
 
-// Création d'une fonction qui affichera les produits de l'api dans la page d'accueil
-
+// 
+/**
+ * Fonction qui affichera les produits de l'api dans la page d'accueil
+ * @async
+ */
 const itemsDisplay = async() => {
   await fetchProduct();
 
@@ -56,9 +66,6 @@ const itemsDisplay = async() => {
   
 }
 }
-
-
-
 
 itemsDisplay(urlData);
 console.log(itemsDisplay)

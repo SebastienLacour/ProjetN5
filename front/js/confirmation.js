@@ -5,17 +5,16 @@ const id = params.get("id");
 console.log(params);
 console.log(id);
 
-// Récupération de l'élément où sera injecté le numéro de commande
-const idDisplay = async() => {
-
+    // Récupération de l'élément où sera injecté le numéro de commande
     const orderId = document.getElementById("orderId");
 
+    //Injection de l'id de l'url dans la balise dédiée
     orderId.innerText = id;
     console.log(orderId);
-    localStorage.removeItem("produit")
-}
 
-idDisplay();
+    //Supprime les valeurs du localstorage
+    localStorage.removeItem("produit")
+
 
 
 
