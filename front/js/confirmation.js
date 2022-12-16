@@ -14,7 +14,3 @@ console.log(id);
 
     //Supprime les valeurs du localstorage
     localStorage.removeItem("produit")
-
-
-
-

@@ -223,8 +223,17 @@ const cartDisplay = async () => {
 
       quantityOutput.innerText = `Qté : ${qty}`
 
+      console.log(getProduct)
+
+      //Modification du tableau getProduct pour pouvoir envoyer la nouvelle quantité dans le localStorage
+      getProduct.splice(m, 1, getProduct[m])
+
+      //Envoie du tableau getProduct actualisé dans le localStorage
+      localStorage.setItem("produit", JSON.stringify(getProduct))
+
       // Calcul du prix en fonction de la quantité choisie
-      let newPrice = urlData[m].price * qty;
+
+      let newPrice = productPrice * qty;
       console.log(newPrice);
 
       //Modification du tableau des prix en remplaçant l'ancien prix par le nouveau
@@ -242,6 +251,8 @@ const cartDisplay = async () => {
       // Ici, le prix inscrit dans l'input du navigateur est égale a celui trouvé dans saveProduct 
       urlData.price = newPrice;
       console.log(urlData.price);
+
+
 
     });
   }
@@ -437,4 +448,4 @@ commandButton.addEventListener("click", (Event) => {
   } else {
     alert("Veuillez bien remplir le formulaire");
   }
-}) 
+})

@@ -105,6 +105,7 @@ let saveProduct = JSON.parse(localStorage.getItem("produit"))
 console.log("valeur du localStorage avant l'ajout du produit")
 console.log(saveProduct);
 
+
 // Enregistrement des options au clic sur le bouton dans l'api
 button.addEventListener("click", (event) => {
 
@@ -125,7 +126,7 @@ button.addEventListener("click", (event) => {
   let quantityChoice = idQuantity.value;
   console.log(quantityChoice);
 
-  
+
   /**
    * Création d'un objet qui contient les différentes informations à enregistrer
    * @type {{id : string, image : string, alt : string, name : string, color : string, quantity : number}}
@@ -143,65 +144,72 @@ button.addEventListener("click", (event) => {
   console.log("productSetting.id");
   console.log(productSetting.id);
 
-  // Si il y a déjà au moins un produit dans le localstorage
-  if (saveProduct) {
 
-    // Création d'une constante qui va vérifier si l'id du produit qu'on souhaite enregistré est déjà présent dans le localStorage
-    const originalProduct = saveProduct.find(product => product.id === id)
+  // Si quantité = 0 ou la couleur est non définie, envoyer une erreur et bloquer l'envoie du produit
+  if (quantityChoice < 1 || colorChoice === "") {
+    alert("Veuillez bien remplir les champs")
 
-    // Si l'id du produit sélectionné est déja présent dans le localStorage et si la couleur sélectionnée est déja présente dans le localStorage
-    if (originalProduct && originalProduct.color === productSetting.color) {
+    //Si la quantité est supérieur à 0 et si une coulaur est choisie
+  } else {
 
-      console.log(true)
-      console.log(originalProduct.color);
-      console.log(productSetting.color);
+    // Si il y a déjà au moins un produit dans le localstorage
+    if (saveProduct) {
+
+      // Création d'une constante qui va vérifier si l'id du produit qu'on souhaite enregistré est déjà présent dans le localStorage
+      const originalProduct = saveProduct.find(product => product.id === id)
+
+      // Si l'id du produit sélectionné est déja présent dans le localStorage et si la couleur sélectionnée est déja présente dans le localStorage
+      if (originalProduct && originalProduct.color === productSetting.color) {
+
+        console.log(originalProduct.color);
+        console.log(productSetting.color);
 
 
         //On met la jour la quantité du produit 
-      productSetting.quantity = parseInt(productSetting.quantity) + parseInt(originalProduct.quantity)
-      console.log(productSetting.quantity);
+        productSetting.quantity = parseInt(productSetting.quantity) + parseInt(originalProduct.quantity)
+        console.log(productSetting.quantity);
 
 
-      //Création d'une constante qui va récupérer l'index du tableau saveProduct qu'on souhaite modifier avant d'envoyer au localStorage
-      const originalProductIndex = saveProduct.findIndex(product => product.id === id)
-      console.log(originalProductIndex);
+        //Création d'une constante qui va récupérer l'index du tableau saveProduct qu'on souhaite modifier avant d'envoyer au localStorage
+        const originalProductIndex = saveProduct.findIndex(product => product.id === id)
+        console.log(originalProductIndex);
 
-      //On remplace l'ancienne valeur du produit par la nouvelle dans le tableau saveProduct
-      saveProduct.splice(originalProductIndex, 1, productSetting)
-      console.log(saveProduct)
+        //On remplace l'ancienne valeur du produit par la nouvelle dans le tableau saveProduct
+        saveProduct.splice(originalProductIndex, 1, productSetting)
+        console.log(saveProduct)
 
-      //On envoie le nouveau tableau dans le localStorage
-      localStorage.setItem("produit", JSON.stringify(saveProduct));
+        //On envoie le nouveau tableau dans le localStorage
+        localStorage.setItem("produit", JSON.stringify(saveProduct));
 
-      // Si l'id sélectionné n'est pas présent dans le localstorage ou si la couleur sélectionnée n'a pas encore été choisie
+        // Si l'id sélectionné n'est pas présent dans le localstorage ou si la couleur sélectionnée n'a pas encore été choisie
+      } else {
+
+
+        // On ajoute ce produit dans le tableau saveProduct
+        saveProduct.push(productSetting);
+
+        //On ajoute le nouveau tableau dans le localStorage
+        localStorage.setItem("produit", JSON.stringify(saveProduct));
+        console.log("produit ajouté au localStorage");
+      }
+
+      // S'il y a pas de prpduit dans le localStorage
+
     } else {
-      console.log(false)
 
-      // On ajoute ce produit dans le tableau saveProduct
+      //On transforme la variable saveProduct en tableau vide
+      saveProduct = [];
+
+      //On ajoute à ce tableau les valeaurs du produit sélectionné
       saveProduct.push(productSetting);
 
-      //On ajoute le nouveau tableau dans le localStorage
+      //On ajoute le tableau dans le localStorage
       localStorage.setItem("produit", JSON.stringify(saveProduct));
-      console.log("produit ajouté au localStorage");
+      console.log(saveProduct);
     }
 
-    // S'il y a pas de prpduit dans le localStorage
-  } else {
 
-    //On transforme la variable saveProduct en tableau vide
-    saveProduct = [];
 
-    //On ajoute à ce tableau les valeaurs du produit sélectionné
-    saveProduct.push(productSetting);
-
-    //On ajoute le tableau dans le localStorage
-    localStorage.setItem("produit", JSON.stringify(saveProduct));
-    console.log(saveProduct);
+    window.location.href = "./cart.html";
   }
-
-
-
-  window.location.href = "./cart.html"; 
-
 })
-

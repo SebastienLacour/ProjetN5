@@ -1,5 +1,3 @@
-
-
 // Récupere l'ID de chaque produit grâce à la methode searchParams qui permet de le récuperer directement dans l'URL
 let params = new URL(document.location).searchParams;
 const id = params.get("id");
